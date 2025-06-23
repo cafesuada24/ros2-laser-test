@@ -30,7 +30,7 @@ class IRSensorNode(Node):
         msg.range_min = 0.0
         msg.range_max = 1.0
 
-        msg.ranges = [float(obstacle)]
+        msg.ranges = [1.0 - float(obstacle)]
         self.publisher_.publish(msg)
 
         if obstacle:
