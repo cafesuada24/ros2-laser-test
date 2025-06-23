@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "geometry_msgs/msg/twist.hpp"
+#include "rcl_interfaces/msg/set_parameters_result.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 
@@ -33,21 +34,29 @@ BumpGoNode::BumpGoNode()
       m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},
       ctl_mode{MODE_AUTO} {
   declare_parameter("control_mode", ctl_mode);
-  auto cb = [this](const rclcpp::Parameter& p) {
+  auto cb = [this](const std::vector<rclcpp::Parameter>& params)
+      -> rcl_interfaces::msg::SetParametersResult {
+    rcl_interfaces::msg::SetParametersResult result{};
+    result.successful = true;
+    const auto p{params.front()};
     const long val{p.as_int()};
     if (val != MODE_AUTO && val != MODE_SOFT_CTL && val != MODE_HARD_CTL) {
       RCLCPP_INFO(get_logger(),
                   "invalid mode value, expected: 1 (Auto), 2 (Hard Control), 3 "
                   "(Soft Control)");
       set_parameter(rclcpp::Parameter("control_mode", ctl_mode));
-      return;
+      result.successful = false;
+      return result;
     }
     ctl_mode = p.as_int();
     stop_moving();
     RCLCPP_INFO(get_logger(), "control mode is set to %d", ctl_mode);
+    return result;
   };
 
-  m_param_cb = m_param_subscriber->add_parameter_callback("control_mode", cb);
+  /*m_param_cb = m_param_subscriber->add_parameter_callback("control_mode",
+   * cb);*/
+  this->add_on_set_parameters_callback(cb);
 }
 
 /*int BumpGoNode::get_mode() const {*/
@@ -71,8 +80,7 @@ void BumpGoNode::go_state(const int new_state) {
   m_state_ts = now();
 }
 
-void BumpGoNode::control_soft() {
-}
+void BumpGoNode::control_soft() {}
 
 void BumpGoNode::control_hard() {
   if (ctl_mode != MODE_HARD_CTL) {
