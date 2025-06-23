@@ -31,7 +31,7 @@ BumpGoNode::BumpGoNode()
             key_input_callback(std::move(msg));
           })},
       m_timer{create_wall_timer(50ms, [this]() { control_cycle(); })},
-      /*m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},*/
+      m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},
       ctl_mode{MODE_AUTO} {
   declare_parameter("control_mode", ctl_mode);
   auto cb = [this](const std::vector<rclcpp::Parameter>& params)
