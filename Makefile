@@ -1,5 +1,5 @@
-SHELL := /usr/bin/zsh
-ROS_DISTRO := jazzy
+SHELL := /bin/bash
+ROS_DISTRO := foxy
 # BASE_CLANG := --build-base build_clang --install-base install_clang
 BUILD_ARGS := --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
