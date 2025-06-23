@@ -23,7 +23,7 @@ class CommandNode(Node):
 
     def listener_callback(self, msg: Twist) -> None:
         if msg.linear.x < 0:
-            command = 'STOP\n'
+            command = 'BACKWARD\n'
             self.get_logger().info(f"Obstacle detected, stopping motors.")
         else:
             command = 'FORWARD\n'
