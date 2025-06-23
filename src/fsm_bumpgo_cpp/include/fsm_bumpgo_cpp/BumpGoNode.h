@@ -2,7 +2,7 @@
 #define FSM_BUMPGO_CPP__BUMPGONODE_H
 
 #include <memory>
-#include <rclcpp/parameter_event_handler.hpp>
+/*#include <rclcpp/parameter_event_handler.hpp>*/
 
 #include "geometry_msgs/msg/twist.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -58,7 +58,7 @@ class BumpGoNode : public rclcpp::Node {
   static constexpr int MODE_SOFT_CTL{3};
   static constexpr int MODE_HARD_CTL{2};
 
-  std::shared_ptr<rclcpp::ParameterEventHandler> m_param_subscriber;
+  /*std::shared_ptr<rclcpp::ParameterEventHandler> m_param_subscriber;*/
   std::shared_ptr<rclcpp::ParameterCallbackHandle> m_param_cb;
 
   int ctl_mode {};
