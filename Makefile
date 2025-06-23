@@ -15,7 +15,7 @@ build:
 
 run_bumpgo:
 	ros2 run fsm_bumpgo_cpp bumpgo --ros-args -r \
-		input_scan:=/lidar -r output_vel:=/cmd_vel \
+		input_scan:=/laser_scan -r output_vel:=/cmd_vel \
 		-p use_sim_time:=true --log-level info
 
 run_gz:
