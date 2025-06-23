@@ -23,12 +23,12 @@ class IRSensorNode(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = 'main_laser'
 
-        msg.angle_min = 0
-        msg.angle_max = 0
-        msg.angle_increment = 0
-        msg.time_increment = 0
-        msg.range_min = 0
-        msg.range_max = 1
+        msg.angle_min = 0.0
+        msg.angle_max = 0.0
+        msg.angle_increment = 0.0
+        msg.time_increment = 0.0
+        msg.range_min = 0.0
+        msg.range_max = 1.0
 
         msg.ranges = [int(obstacle)]
         self.publisher_.publish(msg)
