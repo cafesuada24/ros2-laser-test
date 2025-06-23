@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'robot_control'
+package_name = 'laser_scanner'
 
 setup(
     name=package_name,
@@ -19,8 +19,8 @@ setup(
     license='MIT',
     entry_points={
         'console_scripts': [
-            'irsensor = robot_control.ir_sensor_node:main',
-            'motors = robot_control.motor_controller:main',
+            'irsensor = laser_scanner.sensor_node:main',
+            # 'motors = laser_scanner.motor_controller:main',
         ],
     },
 )

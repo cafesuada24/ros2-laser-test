@@ -4,7 +4,7 @@ from rclpy.node import Node
 from std_msgs.msg import Bool, Header
 from sensor_msgs.msg import LaserScan
 
-IR_PIN = 31  
+IR_PIN = 33  
 
 class IRSensorNode(Node):
     def __init__(self):
