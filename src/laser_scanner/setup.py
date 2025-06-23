@@ -20,7 +20,7 @@ setup(
     entry_points={
         'console_scripts': [
             'irsensor = laser_scanner.sensor_node:main',
-            # 'motors = laser_scanner.motor_controller:main',
+            'motors = laser_scanner.motor_controller:main',
         ],
     },
 )

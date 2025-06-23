@@ -2,6 +2,7 @@ import rclpy
 import serial
 from rclpy.node import Node
 from std_msgs.msg import Bool
+from geometry_msgs.msg import Twist
 
 class CommandNode(Node):
     def __init__(self):
@@ -17,11 +18,11 @@ class CommandNode(Node):
             self.ser = None
         
         # Create a subscriber to the 'distance' topic
-        self.subscription = self.create_subscription(Bool, 'obstacle_detected', self.listener_callback, 10)
+        self.subscription = self.create_subscription(Twist, 'cmd_vel', self.listener_callback, 10)
         
 
-    def listener_callback(self, msg):
-        if msg.data:
+    def listener_callback(self, msg: Twist) -> None:
+        if msg.linear.x < 0:
             command = 'STOP\n'
             self.get_logger().info(f"Obstacle detected, stopping motors.")
         else:
