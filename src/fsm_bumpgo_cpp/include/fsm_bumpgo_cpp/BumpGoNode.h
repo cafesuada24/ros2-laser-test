@@ -58,7 +58,7 @@ class BumpGoNode : public rclcpp::Node {
   static constexpr int MODE_SOFT_CTL{3};
   static constexpr int MODE_HARD_CTL{2};
 
-  std::shared_ptr<rclcpp::ParameterEventHandler> m_param_subscriber;
+  /*std::shared_ptr<rclcpp::ParameterEventHandler> m_param_subscriber;*/
   /*std::shared_ptr<rclcpp::ParameterCallbackHandle> m_param_cb;*/
 
   int ctl_mode {};
