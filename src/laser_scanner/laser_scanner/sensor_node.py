@@ -14,7 +14,7 @@ class IRSensorNode(Node):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(IR_PIN, GPIO.IN)
 
-        self.timer = self.create_timer(0.5, self.read_sensor)
+        self.timer = self.create_timer(0.05, self.read_sensor)
 
     def read_sensor(self):
         obstacle = GPIO.input(IR_PIN) == 0 
