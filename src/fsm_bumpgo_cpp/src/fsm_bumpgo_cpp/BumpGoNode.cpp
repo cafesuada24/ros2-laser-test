@@ -64,7 +64,8 @@ BumpGoNode::BumpGoNode()
 /*}*/
 
 inline void BumpGoNode::stop_moving() const {
-  m_vel_pub->publish<geometry_msgs::msg::Twist>({});
+  geometry_msgs::msg::Twist msg {}; 
+  m_vel_pub->publish(msg);
 }
 
 void BumpGoNode::scan_callback(sensor_msgs::msg::LaserScan::UniquePtr msg) {
