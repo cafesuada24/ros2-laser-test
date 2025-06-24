@@ -64,6 +64,6 @@ class BumpGoNode : public rclcpp::Node {
   int ctl_mode {};
 };
 
-};  // namespace fsm_bumpgo_cpp
+}  // namespace fsm_bumpgo_cpp
 
 #endif  // FSM_BUMPGO_CPP__BUMPGONODE_H // NOLINT
