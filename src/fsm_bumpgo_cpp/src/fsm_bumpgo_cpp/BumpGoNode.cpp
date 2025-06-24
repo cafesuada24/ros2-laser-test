@@ -29,11 +29,15 @@ BumpGoNode::BumpGoNode()
           [this](geometry_msgs::msg::Twist::UniquePtr msg) {
             key_input_callback(std::move(msg));
           })},
-      m_timer{create_wall_timer(50ms, [this]() { control_cycle(); })}
+      m_timer{create_wall_timer(50ms, [this] { control_cycle(); })}
 /*m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},*/
 /*ctl_mode{MODE_AUTO} {*/
 {
-  declare_parameter("control_mode", 1);
+  declare_parameter("control_mode", BumpGoNode::MODE_AUTO);
+
+  geometry_msgs::msg::Twist out_vel{};
+  out_vel.linear.x = BumpGoNode::SPEED_LINEAR;
+  this->m_vel_pub->publish(out_vel);
   /*auto cb = [this](const std::vector<rclcpp::Parameter>& params)*/
   /*    -> rcl_interfaces::msg::SetParametersResult {*/
   /*  rcl_interfaces::msg::SetParametersResult result{};*/
@@ -82,10 +86,14 @@ void BumpGoNode::go_state(const int new_state) {
   m_state_ts = now();
 }
 
+inline int BumpGoNode::getControlMode() const {
+  return this->get_parameter("control_mode").as_int();
+}
+
 void BumpGoNode::control_soft() {}
 
 void BumpGoNode::control_hard() {
-  if (this->get_parameter("control_mode").as_int() != MODE_HARD_CTL) {
+  if (getControlMode() != MODE_HARD_CTL) {
     return;
   }
   if (m_last_key == nullptr) return;
@@ -96,7 +104,7 @@ void BumpGoNode::control_hard() {
   m_last_key = nullptr;
 }
 void BumpGoNode::control_auto() {
-  if (this->get_parameter("control_mode").as_int() != MODE_AUTO) {
+  if (getControlMode() != MODE_AUTO) {
     return;
   }
   if (m_last_scan == nullptr) return;
@@ -121,7 +129,7 @@ void BumpGoNode::control_auto() {
   /*  out_vel.angular.z = SPEED_ANGULAR;*/
   /*}*/
 
-  /*const auto oldState{m_state};*/
+  const auto cur_state{m_state};
 
   switch (m_state) {
     case FORWARD:
@@ -141,7 +149,7 @@ void BumpGoNode::control_auto() {
       }
       break;
     case TURN:
-      out_vel.angular.z = -SPEED_ANGULAR;
+      out_vel.angular.z = SPEED_ANGULAR;
       if (check_turn2fw()) {
         go_state(FORWARD);
       }
@@ -153,9 +161,10 @@ void BumpGoNode::control_auto() {
       break;
   }
 
-  /*if (m_state != oldState) {*/
-  m_vel_pub->publish(out_vel);
-  /*}*/
+  if (cur_state != m_prevState) {
+    m_vel_pub->publish(out_vel);
+    m_prevState = cur_state;
+  }
 }
 
 inline void BumpGoNode::control_cycle() {

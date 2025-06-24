@@ -28,7 +28,8 @@ class BumpGoNode : public rclcpp::Node {
   static constexpr int TURN{2};
   static constexpr int STOP{3};
 
-  int m_state{};              // current state
+  int m_state{};  // current state
+  int m_prevState{-1}; // previous state
   rclcpp::Time m_state_ts{};  // transition time
 
   void go_state(const int new_state);
@@ -57,6 +58,8 @@ class BumpGoNode : public rclcpp::Node {
   static constexpr int MODE_AUTO{1};
   static constexpr int MODE_SOFT_CTL{3};
   static constexpr int MODE_HARD_CTL{2};
+
+  inline int getControlMode() const; 
 
   /*std::shared_ptr<rclcpp::ParameterEventHandler> m_param_subscriber;*/
   /*std::shared_ptr<rclcpp::ParameterCallbackHandle> m_param_cb;*/
