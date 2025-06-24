@@ -5,7 +5,7 @@ BUILD_ARGS := --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 
 # .PHONY: build run_bumpgo run_gz run_bridge
-.PHONY: build run open_teleop
+.PHONY: build run open_teleop set_mode_hard_control set_mode_auto
 
 build:
 	colcon build $(BUILD_ARGS) &&\
@@ -16,6 +16,12 @@ build:
 
 run:
 	ros2 launch hardware_controller run.launch.py
+
+set_mode_hard_control:
+	ros2 param set /bump_go control_mode 2
+
+set_mode_hard_auto:
+	ros2 param set /bump_go control_mode 1
 
 # run_bumpgo:
 # 	ros2 run fsm_bumpgo_cpp bumpgo --ros-args -r \
