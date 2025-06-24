@@ -24,7 +24,11 @@ class CommandNode(Node):
     def listener_callback(self, msg: Twist) -> None:
         if msg.linear.x < 0:
             command = 'BACKWARD\n'
-            self.get_logger().info(f"Obstacle detected, stopping motors.")
+            self.get_logger().info(f"Obstacle detected, moving backward.")
+        elif msg.linear.x == 0:
+            if msg.angular.z == 0:
+                command = 'STOP\n'
+                self.get_logger().info(f"No signal from sensor, stopping.")
         else:
             command = 'FORWARD\n'
             self.get_logger().info(f"No obstacle detected, moving forward.")
@@ -40,6 +44,7 @@ def main(args=None):
         rclpy.spin(node)
     except KeyboardInterrupt:
         pass
-    node.ser.close()
-    node.destroy_node()
-    rclpy.shutdown()
+    finally:
+        node.ser.close()
+        node.destroy_node()
+        rclpy.shutdown()

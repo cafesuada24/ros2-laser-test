@@ -64,7 +64,7 @@ BumpGoNode::BumpGoNode()
 /*}*/
 
 inline void BumpGoNode::stop_moving() const {
-  geometry_msgs::msg::Twist msg {}; 
+  geometry_msgs::msg::Twist msg{};
   m_vel_pub->publish(msg);
 }
 
@@ -120,6 +120,8 @@ void BumpGoNode::control_auto() {
   /*  out_vel.angular.z = SPEED_ANGULAR;*/
   /*}*/
 
+  /*const auto oldState{m_state};*/
+
   switch (m_state) {
     case FORWARD:
       out_vel.linear.x = SPEED_LINEAR;
@@ -150,7 +152,9 @@ void BumpGoNode::control_auto() {
       break;
   }
 
-  m_vel_pub->publish(out_vel);
+  /*if (m_state != oldState) {*/
+    m_vel_pub->publish(out_vel);
+  /*}*/
 }
 
 inline void BumpGoNode::control_cycle() {
@@ -186,7 +190,9 @@ bool BumpGoNode::check_fw2stop() const {
 }
 
 bool BumpGoNode::check_back2turn() const {
-  return (now() - m_state_ts) > BACKING_TIME;
+  const auto pos{m_last_scan->ranges.size() >> 1};
+  return m_last_scan->ranges[pos] >= OBSTACLE_DISTANCE;
+  /*return (now() - m_state_ts) > BACKING_TIME;*/
 
   /*const auto pos{m_last_scan->ranges.size() >> 1};*/
   /*return m_last_scan->ranges[pos] > OBSTACLE_DISTANCE;*/

@@ -40,7 +40,7 @@ class BumpGoNode : public rclcpp::Node {
 
   const rclcpp::Duration SCAN_TIMEOUT{1s};
   const rclcpp::Duration BACKING_TIME{2s};
-  const rclcpp::Duration TURNING_TIME{1s};
+  const rclcpp::Duration TURNING_TIME{2s};
 
   static constexpr float OBSTACLE_DISTANCE{1.0f};
   static constexpr float SPEED_LINEAR{0.5f};
