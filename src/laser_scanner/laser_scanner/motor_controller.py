@@ -24,14 +24,14 @@ class CommandNode(Node):
     def listener_callback(self, msg: Twist) -> None:
         if msg.linear.x < 0:
             command = 'BACKWARD\n'
-            self.get_logger().info(f"Obstacle detected, moving backward.")
+            self.get_logger().info("Obstacle detected, moving backward.")
         elif msg.linear.x == 0:
             if msg.angular.z == 0:
                 command = 'STOP\n'
-                self.get_logger().info(f"No signal from sensor, stopping.")
+                self.get_logger().info("No signal from sensor, stopping.")
         else:
             command = 'FORWARD\n'
-            self.get_logger().info(f"No obstacle detected, moving forward.")
+            self.get_logger().info("No obstacle detected, moving forward.")
         
         if self.ser:
             self.ser.write(command.encode())
