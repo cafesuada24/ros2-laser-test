@@ -1,7 +1,6 @@
 import rclpy
 import serial
 from rclpy.node import Node
-from std_msgs.msg import Bool
 from geometry_msgs.msg import Twist
 
 class CommandNode(Node):
@@ -16,6 +15,7 @@ class CommandNode(Node):
         except serial.SerialException as e:
             self.get_logger().error(f"Failed to connect to Arduino: {e}")
             self.ser = None
+            raise
         
         # Create a subscriber to the 'distance' topic
         self.subscription = self.create_subscription(Twist, 'cmd_vel', self.listener_callback, 10)
@@ -34,7 +34,7 @@ class CommandNode(Node):
                 command = 'FORWARD\n'
                 self.get_logger().info("No obstacle detected, moving forward.")
         elif msg.angular.z != 0:
-            if msg.angular.z < 0:
+            if msg.angular.z > 0:
                 command = 'LEFT\n'
                 self.get_logger().info("Turning left")
             # elif msg.linear.x == 0:
