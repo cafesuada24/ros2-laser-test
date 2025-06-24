@@ -15,7 +15,7 @@ build:
 	echo "compile_commands.json linked"
 
 run:
-	ros2 launch hardware_controller launch.py
+	ros2 launch hardware_controller run.launch.py
 
 # run_bumpgo:
 # 	ros2 run fsm_bumpgo_cpp bumpgo --ros-args -r \
