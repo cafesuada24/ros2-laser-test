@@ -190,9 +190,9 @@ bool BumpGoNode::check_fw2stop() const {
 }
 
 bool BumpGoNode::check_back2turn() const {
-  const auto pos{m_last_scan->ranges.size() >> 1};
-  return m_last_scan->ranges[pos] >= OBSTACLE_DISTANCE;
-  /*return (now() - m_state_ts) > BACKING_TIME;*/
+  /*const auto pos{m_last_scan->ranges.size() >> 1};*/
+  /*return m_last_scan->ranges[pos] >= OBSTACLE_DISTANCE;*/
+  return (now() - m_state_ts) > BACKING_TIME;
 
   /*const auto pos{m_last_scan->ranges.size() >> 1};*/
   /*return m_last_scan->ranges[pos] > OBSTACLE_DISTANCE;*/
