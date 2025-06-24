@@ -33,7 +33,7 @@ BumpGoNode::BumpGoNode()
 /*m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},*/
 /*ctl_mode{MODE_AUTO} {*/
 {
-  declare_parameter("control_mode", MODE_AUTO);
+  declare_parameter("control_mode", 1);
   /*auto cb = [this](const std::vector<rclcpp::Parameter>& params)*/
   /*    -> rcl_interfaces::msg::SetParametersResult {*/
   /*  rcl_interfaces::msg::SetParametersResult result{};*/
@@ -85,9 +85,9 @@ void BumpGoNode::go_state(const int new_state) {
 void BumpGoNode::control_soft() {}
 
 void BumpGoNode::control_hard() {
-  /*if (this->get_parameter("control_mode").as_int() != MODE_HARD_CTL) {*/
-  /*  return;*/
-  /*}*/
+  if (this->get_parameter("control_mode").as_int() != MODE_HARD_CTL) {
+    return;
+  }
   if (m_last_key == nullptr) return;
 
   /*geometry_msgs::msg::Twist out_vel{};*/
@@ -96,9 +96,9 @@ void BumpGoNode::control_hard() {
   m_last_key = nullptr;
 }
 void BumpGoNode::control_auto() {
-  /*if (this->get_parameter("control_mode").as_int() != MODE_AUTO) {*/
-  /*  return;*/
-  /*}*/
+  if (this->get_parameter("control_mode").as_int() != MODE_AUTO) {
+    return;
+  }
   if (m_last_scan == nullptr) return;
 
   geometry_msgs::msg::Twist out_vel{};
