@@ -33,30 +33,30 @@ BumpGoNode::BumpGoNode()
       m_timer{create_wall_timer(50ms, [this]() { control_cycle(); })},
       /*m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},*/
       ctl_mode{MODE_AUTO} {
-  declare_parameter("control_mode", ctl_mode);
-  auto cb = [this](const std::vector<rclcpp::Parameter>& params)
-      -> rcl_interfaces::msg::SetParametersResult {
-    rcl_interfaces::msg::SetParametersResult result{};
-    result.successful = true;
-    const auto p{params.front()};
-    const long val{p.as_int()};
-    if (val != MODE_AUTO && val != MODE_SOFT_CTL && val != MODE_HARD_CTL) {
-      RCLCPP_INFO(get_logger(),
-                  "invalid mode value, expected: 1 (Auto), 2 (Hard Control), 3 "
-                  "(Soft Control)");
-      set_parameter(rclcpp::Parameter("control_mode", ctl_mode));
-      result.successful = false;
-      return result;
-    }
-    ctl_mode = p.as_int();
-    stop_moving();
-    RCLCPP_INFO(get_logger(), "control mode is set to %d", ctl_mode);
-    return result;
-  };
+  declare_parameter("control_mode", MODE_AUTO);
+  /*auto cb = [this](const std::vector<rclcpp::Parameter>& params)*/
+  /*    -> rcl_interfaces::msg::SetParametersResult {*/
+  /*  rcl_interfaces::msg::SetParametersResult result{};*/
+  /*  result.successful = true;*/
+  /*  const auto p{params.front()};*/
+  /*  const long val{p.as_int()};*/
+  /*  if (val != MODE_AUTO && val != MODE_SOFT_CTL && val != MODE_HARD_CTL) {*/
+  /*    RCLCPP_INFO(get_logger(),*/
+  /*                "invalid mode value, expected: 1 (Auto), 2 (Hard Control), 3 "*/
+  /*                "(Soft Control)");*/
+  /*    set_parameter(rclcpp::Parameter("control_mode", ctl_mode));*/
+  /*    result.successful = false;*/
+  /*    return result;*/
+  /*  }*/
+  /*  ctl_mode = p.as_int();*/
+  /*  stop_moving();*/
+  /*  RCLCPP_INFO(get_logger(), "control mode is set to %d", ctl_mode);*/
+  /*  return result;*/
+  /*};*/
 
   /*m_param_cb = m_param_subscriber->add_parameter_callback("control_mode",
    * cb);*/
-  this->add_on_set_parameters_callback(cb);
+  /*this->add_on_set_parameters_callback(cb);*/
 }
 
 /*int BumpGoNode::get_mode() const {*/
@@ -84,7 +84,7 @@ void BumpGoNode::go_state(const int new_state) {
 void BumpGoNode::control_soft() {}
 
 void BumpGoNode::control_hard() {
-  if (ctl_mode != MODE_HARD_CTL) {
+  if (this->get_parameter("control_mode").as_int() != MODE_HARD_CTL) {
     return;
   }
   if (m_last_key == nullptr) return;
@@ -95,7 +95,7 @@ void BumpGoNode::control_hard() {
   m_last_key = nullptr;
 }
 void BumpGoNode::control_auto() {
-  if (ctl_mode != MODE_AUTO) {
+  if (this->get_parameter("control_mode").as_int() != MODE_AUTO) {
     return;
   }
   if (m_last_scan == nullptr) return;
@@ -158,7 +158,7 @@ void BumpGoNode::control_auto() {
 }
 
 inline void BumpGoNode::control_cycle() {
-  switch (ctl_mode) {
+  switch (this->get_parameter("control_mode").as_int()) {
     case MODE_SOFT_CTL:
       control_soft();
       break;
