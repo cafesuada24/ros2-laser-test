@@ -11,7 +11,7 @@ class CommandNode(Node):
 
         # Initialize serial communication with Arduino
         try:
-            self.ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+            self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)
             self.get_logger().info("Serial connection established with Arduino.")
         except serial.SerialException as e:
             self.get_logger().error(f"Failed to connect to Arduino: {e}")
