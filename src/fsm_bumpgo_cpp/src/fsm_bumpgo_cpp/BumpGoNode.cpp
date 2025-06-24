@@ -208,4 +208,4 @@ bool BumpGoNode::check_stop2fw() const {
   const auto elapsed{now() - rclcpp::Time(m_last_scan->header.stamp)};
   return elapsed < SCAN_TIMEOUT;
 }
-};  // namespace fsm_bumpgo_cpp
+}  // namespace fsm_bumpgo_cpp
