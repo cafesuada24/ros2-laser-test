@@ -6,7 +6,7 @@ from geometry_msgs.msg import Twist
 
 class CommandNode(Node):
     def __init__(self):
-        super().__init__('motor_controller')
+        super().__init__('motors_controller')
 
 
         # Initialize serial communication with Arduino

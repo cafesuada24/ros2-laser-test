@@ -1,6 +1,8 @@
-from setuptools import find_packages, setup
+import os
+from setuptools import setup
+from glob import glob
 
-package_name = 'laser_scanner'
+package_name = 'hardware_controller'
 
 setup(
     name=package_name,
@@ -10,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -19,8 +22,8 @@ setup(
     license='MIT',
     entry_points={
         'console_scripts': [
-            'irsensor = laser_scanner.sensor_node:main',
-            'motors = laser_scanner.motor_controller:main',
+            'irsensor = hardware_controller.irsensor:main',
+            'motors_controller = hardware_controller.motors_controller:main',
         ],
     },
 )

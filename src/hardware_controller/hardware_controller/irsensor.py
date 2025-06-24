@@ -8,8 +8,8 @@ IR_PIN = 31
 
 class IRSensorNode(Node):
     def __init__(self):
-        super().__init__('ir_sensor_node')
-        self.publisher_ = self.create_publisher(LaserScan, 'laser_scan', 10)
+        super().__init__('irsensor')
+        self.publisher_ = self.create_publisher(LaserScan, 'ir_scan', 10)
 
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(IR_PIN, GPIO.IN)
