@@ -25,10 +25,10 @@ class CommandNode(Node):
         if msg.linear.x < 0:
             command = 'BACKWARD\n'
             self.get_logger().info("Obstacle detected, moving backward.")
-        elif msg.linear.x == 0:
-            if msg.angular.z == 0:
-                command = 'STOP\n'
-                self.get_logger().info("No signal from sensor, stopping.")
+        # elif msg.linear.x == 0:
+        #     if msg.angular.z == 0:
+        #         command = 'STOP\n'
+        #         self.get_logger().info("No signal from sensor, stopping.")
         else:
             command = 'FORWARD\n'
             self.get_logger().info("No obstacle detected, moving forward.")
