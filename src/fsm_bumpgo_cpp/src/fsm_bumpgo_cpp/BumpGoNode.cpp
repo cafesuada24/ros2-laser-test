@@ -6,7 +6,6 @@
 #include <utility>
 
 #include "geometry_msgs/msg/twist.hpp"
-#include "rcl_interfaces/msg/set_parameters_result.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 
@@ -30,9 +29,10 @@ BumpGoNode::BumpGoNode()
           [this](geometry_msgs::msg::Twist::UniquePtr msg) {
             key_input_callback(std::move(msg));
           })},
-      m_timer{create_wall_timer(50ms, [this]() { control_cycle(); })},
-      /*m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},*/
-      ctl_mode{MODE_AUTO} {
+      m_timer{create_wall_timer(50ms, [this]() { control_cycle(); })}
+/*m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},*/
+/*ctl_mode{MODE_AUTO} {*/
+{
   declare_parameter("control_mode", MODE_AUTO);
   /*auto cb = [this](const std::vector<rclcpp::Parameter>& params)*/
   /*    -> rcl_interfaces::msg::SetParametersResult {*/
@@ -42,7 +42,8 @@ BumpGoNode::BumpGoNode()
   /*  const long val{p.as_int()};*/
   /*  if (val != MODE_AUTO && val != MODE_SOFT_CTL && val != MODE_HARD_CTL) {*/
   /*    RCLCPP_INFO(get_logger(),*/
-  /*                "invalid mode value, expected: 1 (Auto), 2 (Hard Control), 3 "*/
+  /*                "invalid mode value, expected: 1 (Auto), 2 (Hard Control), 3
+   * "*/
   /*                "(Soft Control)");*/
   /*    set_parameter(rclcpp::Parameter("control_mode", ctl_mode));*/
   /*    result.successful = false;*/
@@ -84,9 +85,9 @@ void BumpGoNode::go_state(const int new_state) {
 void BumpGoNode::control_soft() {}
 
 void BumpGoNode::control_hard() {
-  if (this->get_parameter("control_mode").as_int() != MODE_HARD_CTL) {
-    return;
-  }
+  /*if (this->get_parameter("control_mode").as_int() != MODE_HARD_CTL) {*/
+  /*  return;*/
+  /*}*/
   if (m_last_key == nullptr) return;
 
   /*geometry_msgs::msg::Twist out_vel{};*/
@@ -95,9 +96,9 @@ void BumpGoNode::control_hard() {
   m_last_key = nullptr;
 }
 void BumpGoNode::control_auto() {
-  if (this->get_parameter("control_mode").as_int() != MODE_AUTO) {
-    return;
-  }
+  /*if (this->get_parameter("control_mode").as_int() != MODE_AUTO) {*/
+  /*  return;*/
+  /*}*/
   if (m_last_scan == nullptr) return;
 
   geometry_msgs::msg::Twist out_vel{};
@@ -153,7 +154,7 @@ void BumpGoNode::control_auto() {
   }
 
   /*if (m_state != oldState) {*/
-    m_vel_pub->publish(out_vel);
+  m_vel_pub->publish(out_vel);
   /*}*/
 }
 
@@ -191,7 +192,8 @@ bool BumpGoNode::check_fw2stop() const {
 
 bool BumpGoNode::check_back2turn() const {
   const auto pos{m_last_scan->ranges.size() >> 1};
-  return m_last_scan->ranges[pos] >= OBSTACLE_DISTANCE && (now() - m_state_ts) > BACKING_TIME;
+  return m_last_scan->ranges[pos] >= OBSTACLE_DISTANCE &&
+         (now() - m_state_ts) > BACKING_TIME;
   /*return (now() - m_state_ts) > BACKING_TIME;*/
 
   /*const auto pos{m_last_scan->ranges.size() >> 1};*/

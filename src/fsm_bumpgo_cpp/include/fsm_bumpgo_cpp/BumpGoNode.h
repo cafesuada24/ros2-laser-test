@@ -61,7 +61,7 @@ class BumpGoNode : public rclcpp::Node {
   /*std::shared_ptr<rclcpp::ParameterEventHandler> m_param_subscriber;*/
   /*std::shared_ptr<rclcpp::ParameterCallbackHandle> m_param_cb;*/
 
-  int ctl_mode {};
+  /*int ctl_mode {};*/
 };
 
 }  // namespace fsm_bumpgo_cpp
