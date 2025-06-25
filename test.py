@@ -19,7 +19,7 @@ class DCMotor:
         GPIO.setup(pin2, GPIO.OUT, initial=GPIO.LOW)
         self.__pin2 = pin2
 
-        GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.HIGH)
         self.__pwm = GPIO.PWM(pwm_pin, 100)
         self.pwm.start(0)
 
