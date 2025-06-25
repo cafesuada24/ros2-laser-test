@@ -13,13 +13,13 @@ class DCMotor:
         min_duty: int = 0,
         max_duty: int = 100,
     ) -> None:
-        GPIO.setup(pin1, GPIO.OUT)
+        GPIO.setup(pin1, GPIO.OUT, initial=GPIO.LOW)
         self.__pin1 = pin1
 
-        GPIO.setup(pin2, GPIO.OUT)
+        GPIO.setup(pin2, GPIO.OUT, initial=GPIO.LOW)
         self.__pin2 = pin2
 
-        GPIO.setup(pwm_pin, GPIO.OUT)
+        GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.LOW)
         self.__pwm = GPIO.PWM(pwm_pin, 100)
         self.pwm.start(0)
 
