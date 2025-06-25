@@ -80,8 +80,13 @@ m2 = DCMotor(
 
 
 try:
-    m1.forward()
-    m2.forward()
+    while (True):
+        m1.forward()
+        m2.forward()
 except KeyboardInterrupt:
     m1.stop()
     m2.stop()
+finally:
+    m1.pwm.stop()
+    m2.pwm.stop()
+    GPIO.cleanup()
