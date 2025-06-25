@@ -20,7 +20,7 @@ class DCMotor:
         self.__pin2 = pin2
 
         GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.HIGH)
-        self.__pwm = GPIO.PWM(pwm_pin, 100)
+        self.__pwm = GPIO.PWM(pwm_pin, 1000)
         self.pwm.start(0)
 
         self.__min_duty = min_duty
@@ -51,7 +51,7 @@ class DCMotor:
     def stop(self):
         GPIO.output(self.__pin1, GPIO.LOW)
         GPIO.output(self.__pin2, GPIO.LOW)
-        # self.duty_cycle(0)
+        self.duty_cycle(0)
 
     def duty_cycle(self, speed: int = 50) -> None:
         if speed < self.__min_duty or speed > self.__max_duty:
