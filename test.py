@@ -82,7 +82,7 @@ import time
 try:
     print("Motor Control Test")
     print("Motor 1 Forward at 50% speed...")
-    m1.forward(50)
+    m1.forward(5)
     time.sleep(3)
 
     print("Motor 1 Backward at 75% speed...")
@@ -116,7 +116,7 @@ except KeyboardInterrupt:
     print("\nExiting program.")
 
 finally:
-    m1.pwm.stop()
-    m2.pwm.stop()
+    m1.stop()
+    m2.stop()
     GPIO.cleanup() # This resets all GPIO pins used by the script to their default state
     print("GPIO cleaned up.")
