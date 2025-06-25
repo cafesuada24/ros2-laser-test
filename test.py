@@ -20,7 +20,8 @@ class DCMotor:
         self.__pin2 = pin2
 
         GPIO.setup(pwm_pin, GPIO.OUT)
-        self.__pwm = GPIO.PWM(pwm_pin, 1000)
+        self.__pwm = GPIO.PWM(pwm_pin, 100)
+        self.pwm.start(0)
 
         self.__min_duty = min_duty
         self.__max_duty = max_duty
@@ -35,17 +36,17 @@ class DCMotor:
         if speed < self.__min_duty or speed > self.__max_duty:
             print(f"Invalid speed: {speed}. Setting to 0.")
             speed = 0
-        self.duty_cycle(speed)
         GPIO.output(self.__pin1, GPIO.HIGH)
         GPIO.output(self.__pin2, GPIO.LOW)
+        self.duty_cycle(speed)
 
     def backward(self, speed: int = 50) -> None:
         if speed < self.__min_duty or speed > self.__max_duty:
             print(f"Invalid speed: {speed}. Setting to 0.")
             speed = 0
-        self.duty_cycle(speed)
         GPIO.output(self.__pin1, GPIO.LOW)
         GPIO.output(self.__pin2, GPIO.HIGH)
+        self.duty_cycle(speed)
 
     def stop(self):
         GPIO.output(self.__pin1, GPIO.LOW)
@@ -57,7 +58,7 @@ class DCMotor:
             print(f"Invalid speed: {speed}. Setting to 0.")
             speed = 0
         # self.speed = speed
-        self.pwm.start(0)
+        # self.pwm.start(0)
         self.pwm.ChangeDutyCycle(speed)
         # if self.speed <= 0 or self.speed > 100:
         #     duty_cycle = 0
@@ -77,14 +78,45 @@ m2 = DCMotor(
 )
 
 
+import time
 try:
-    while (True):
-        m1.forward()
-        m2.forward()
-except KeyboardInterrupt:
+    print("Motor Control Test")
+    print("Motor 1 Forward at 50% speed...")
+    m1.forward(50)
+    time.sleep(3)
+
+    print("Motor 1 Backward at 75% speed...")
+    m2.backward(75)
+    time.sleep(3)
+
+    print("Motor 1 Stop...")
     m1.stop()
+    time.sleep(1)
+
+    print("Motor 2 Forward at 60% speed...")
+    m2.backward(60)
+    time.sleep(3)
+
+    print("Motor 2 Backward at 80% speed...")
+    m2.backward(80)
+    time.sleep(3)
+
+    print("Motor 2 Stop...")
     m2.stop()
+    time.sleep(1)
+
+    print("Both motors forward at 40% speed...")
+    m1.forward(40)
+    m2.forward(40)
+    time.sleep(3)
+
+    print("Stopping all motors and cleaning up GPIO...")
+
+except KeyboardInterrupt:
+    print("\nExiting program.")
+
 finally:
     m1.pwm.stop()
     m2.pwm.stop()
-    GPIO.cleanup()
+    GPIO.cleanup() # This resets all GPIO pins used by the script to their default state
+    print("GPIO cleaned up.")
