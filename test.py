@@ -59,8 +59,8 @@ class DCMotor:
             print(f"Invalid speed: {speed}. Setting to 0.")
             speed = 0
         self.speed = speed
-        self.__pwm.start(0)
-        self.__pwm.ChangeDutyCycle(speed)
+        self.pwm.start(0)
+        self.pwm.ChangeDutyCycle(speed)
         # if self.speed <= 0 or self.speed > 100:
         #     duty_cycle = 0
         # else:
@@ -72,10 +72,10 @@ class DCMotor:
 
 
 m1 = DCMotor(
-    11, 13, 15,
+    50, 14, 194
 )
 m2 = DCMotor(
-    16, 18, 22,
+    232, 15, 13
 )
 
 
