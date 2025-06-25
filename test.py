@@ -2,7 +2,7 @@ import Jetson.GPIO as GPIO
 from rclpy.node import Node
 import rclpy
 
-# GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 
 class DCMotor:
     # the min_duty and max_duty are defined for 15000Hz frequency
