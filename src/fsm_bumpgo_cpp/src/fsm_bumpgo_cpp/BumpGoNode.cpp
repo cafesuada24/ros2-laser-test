@@ -33,11 +33,7 @@ BumpGoNode::BumpGoNode()
 /*m_param_subscriber{std::make_shared<rclcpp::ParameterEventHandler>(this)},*/
 /*ctl_mode{MODE_AUTO} {*/
 {
-  declare_parameter("control_mode", BumpGoNode::MODE_AUTO);
-
-  geometry_msgs::msg::Twist out_vel{};
-  out_vel.linear.x = BumpGoNode::SPEED_LINEAR;
-  this->m_vel_pub->publish(out_vel);
+  declare_parameter("control_mode", 1);
   /*auto cb = [this](const std::vector<rclcpp::Parameter>& params)*/
   /*    -> rcl_interfaces::msg::SetParametersResult {*/
   /*  rcl_interfaces::msg::SetParametersResult result{};*/
