@@ -72,10 +72,10 @@ class DCMotor:
 
 
 m1 = DCMotor(
-    11, 13, 38
+    11, 13, 32
 )
 m2 = DCMotor(
-    16, 18, 32
+    16, 18, 33
 )
 
 
