@@ -1,6 +1,6 @@
 import Jetson.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 
 class DCMotor:
     # the min_duty and max_duty are defined for 15000Hz frequency
