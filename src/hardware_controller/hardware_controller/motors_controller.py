@@ -2,7 +2,7 @@ import rclpy
 import serial
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-
+from rclpy.qos import qos_profile_sensor_data
 
 class CommandNode(Node):
     def __init__(self):
@@ -25,30 +25,33 @@ class CommandNode(Node):
             Twist,
             "cmd_vel",
             self.listener_callback,
-            10,
+            qos_profile_sensor_data,
         )
 
     def motor_control(self) -> None:
         if self.last_ctl_command is None:
             return
 
-        if self.last_ctl_command.linear is not None and self.last_ctl_command.linear.x != 0:
-            if self.last_ctl_command.linear.x < 0:
+        cmd = self.last_ctl_command
+        self.last_ctl_command = None
+
+        if cmd.linear is not None and cmd.linear.x != 0:
+            if cmd.linear.x < 0:
                 command = "BACKWARD\n"
                 self.get_logger().info("Obstacle detected, moving backward.")
-            # elif self.last_ctl_command.linear.x == 0:
-            #     if self.last_ctl_command.angular.z == 0:
+            # elif cmd.linear.x == 0:
+            #     if cmd.angular.z == 0:
             #         command = 'STOP\n'
             #         self.get_logger().info("No signal from sensor, stopping.")
             else:
                 command = "FORWARD\n"
                 self.get_logger().info("No obstacle detected, moving forward.")
-        elif self.last_ctl_command.angular is not None and self.last_ctl_command.angular.z != 0:
-            if self.last_ctl_command.angular.z > 0:
+        elif cmd.angular is not None and cmd.angular.z != 0:
+            if cmd.angular.z > 0:
                 command = "LEFT\n"
                 self.get_logger().info("Turning left")
-            # elif self.last_ctl_command.linear.x == 0:
-            #     if self.last_ctl_command.angular.z == 0:
+            # elif cmd.linear.x == 0:
+            #     if cmd.angular.z == 0:
             #         command = 'STOP\n'
             #         self.get_logger().info("No signal from sensor, stopping.")
             else:
