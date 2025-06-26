@@ -1,21 +1,102 @@
-import rclpy
-import serial
+import Jetson.GPIO as GPIO
 from rclpy.node import Node
+import rclpy
 from geometry_msgs.msg import Twist
 from rclpy.qos import qos_profile_sensor_data
 
-class CommandNode(Node):
+
+
+class DCMotor:
+    # the min_duty and max_duty are defined for 15000Hz frequency
+    # you can pass as arguments
+    def __init__(
+        self,
+        pin1: int,
+        pin2: int,
+        pwm_pin: int,
+        min_duty: int = 0,
+        max_duty: int = 100,
+    ) -> None:
+        GPIO.setup(pin1, GPIO.OUT, initial=GPIO.LOW)
+        self.__pin1 = pin1
+
+        GPIO.setup(pin2, GPIO.OUT, initial=GPIO.LOW)
+        self.__pin2 = pin2
+
+        GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.HIGH)
+        self.__pwm = GPIO.PWM(pwm_pin, 1000)
+        self.pwm.start(0)
+
+        self.__min_duty = min_duty
+        self.__max_duty = max_duty
+        # self.speed: int = 0
+
+    @property
+    def pwm(self) -> GPIO.PWM:
+        return self.__pwm
+
+    # speed value can be between 0 and 100
+    def forward(self, speed: int = 50) -> None:
+        if speed < self.__min_duty or speed > self.__max_duty:
+            print(f"Invalid speed: {speed}. Setting to 0.")
+            speed = 0
+        GPIO.output(self.__pin1, GPIO.HIGH)
+        GPIO.output(self.__pin2, GPIO.LOW)
+        self.duty_cycle(speed)
+
+    def backward(self, speed: int = 50) -> None:
+        if speed < self.__min_duty or speed > self.__max_duty:
+            print(f"Invalid speed: {speed}. Setting to 0.")
+            speed = 0
+        GPIO.output(self.__pin1, GPIO.LOW)
+        GPIO.output(self.__pin2, GPIO.HIGH)
+        self.duty_cycle(speed)
+
+    def stop(self):
+        GPIO.output(self.__pin1, GPIO.LOW)
+        GPIO.output(self.__pin2, GPIO.LOW)
+        self.duty_cycle(0)
+
+    def duty_cycle(self, speed: int = 50) -> None:
+        if speed < self.__min_duty or speed > self.__max_duty:
+            print(f"Invalid speed: {speed}. Setting to 0.")
+            speed = 0
+        # self.speed = speed
+        # self.pwm.start(0)
+        self.pwm.ChangeDutyCycle(speed)
+        # if self.speed <= 0 or self.speed > 100:
+        #     duty_cycle = 0
+        # else:
+        #     duty_cycle = int(
+        #         self.min_duty
+        #         + (self.max_duty - self.min_duty) * ((self.speed - 1) / (100 - 1))
+        #     )
+        # return duty_cycle
+
+
+class MotorsControllerNode(Node):
     def __init__(self):
         super().__init__("motors_controller")
 
+        self.motor1 = DCMotor(
+            11,
+            13,
+            32,
+        )
+        self.motor2 = DCMotor(
+            16,
+            18,
+            33,
+        )
+
         # Initialize serial communication with Arduino
-        try:
-            self.ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=1)
-            self.get_logger().info("Serial connection established with Arduino.")
-        except serial.SerialException as e:
-            self.get_logger().error(f"Failed to connect to Arduino: {e}")
-            self.ser = None
-            raise
+        # try:
+        #     self.ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=1)
+        #     self.get_logger().info("Serial connection established with Arduino.")
+        # except serial.SerialException as e:
+        #     self.get_logger().error(f"Failed to connect to Arduino: {e}")
+        #     self.ser = None
+        #     raise
 
         self.last_ctl_command: Twist | None = None
         self.timer = self.create_timer(0.05, self.motor_control)
@@ -36,47 +117,68 @@ class CommandNode(Node):
         self.last_ctl_command = None
 
         if cmd.linear is not None and cmd.linear.x != 0:
+            if abs(cmd.linear.x) > 1:
+                self.get_logger().info(
+                    "Velocity can not greater than 1 (100%), setting to 1."
+                )
+                cmd.linear.x = 1
+
             if cmd.linear.x < 0:
-                command = "BACKWARD\n"
+                # command = "BACKWARD\n"
+                self.motor1.backward(-cmd.linear.x)
+                self.motor2.backward(-cmd.linear.x)
                 self.get_logger().info("Obstacle detected, moving backward.")
             # elif cmd.linear.x == 0:
             #     if cmd.angular.z == 0:
             #         command = 'STOP\n'
             #         self.get_logger().info("No signal from sensor, stopping.")
             else:
-                command = "FORWARD\n"
+                # command = "FORWARD\n"
+
+                self.motor1.forward(cmd.linear.x)
+                self.motor2.forward(cmd.linear.x)
                 self.get_logger().info("No obstacle detected, moving forward.")
         elif cmd.angular is not None and cmd.angular.z != 0:
             if cmd.angular.z > 0:
-                command = "LEFT\n"
+                # command = "LEFT\n"
+                self.motor1.backward()
+                self.motor2.forward()
                 self.get_logger().info("Turning left")
             # elif cmd.linear.x == 0:
             #     if cmd.angular.z == 0:
             #         command = 'STOP\n'
             #         self.get_logger().info("No signal from sensor, stopping.")
             else:
-                command = "RIGHT\n"
+                # command = "RIGHT\n"
+                self.motor1.forward()
+                self.motor2.backward()
                 self.get_logger().info("Turning right")
         else:
-            command = "STOP\n"
+            # command = "STOP\n"
+            self.motor1.stop()
+            self.motor2.stop()
             self.get_logger().info("Stopping...")
 
-        if self.ser:
-            self.ser.write(command.encode())
-            self.get_logger().info(f"Sent command: {command.strip()}")
+        # if self.ser:
+        #     self.ser.write(command.encode())
+        #     self.get_logger().info(f"Sent command: {command.strip()}")
 
     def listener_callback(self, msg: Twist) -> None:
         self.last_ctl_command = msg
 
 
 def main(args=None):
+    GPIO.setmode(GPIO.BOARD)
     rclpy.init(args=args)
-    node = CommandNode()
     try:
+        node = MotorsControllerNode()
         rclpy.spin(node)
     except KeyboardInterrupt:
         pass
     finally:
-        node.ser.close()
+        # node.ser.close()
+        node.motor1.stop()
+        node.motor2.stop()
+        GPIO.cleanup()
         node.destroy_node()
         rclpy.shutdown()
