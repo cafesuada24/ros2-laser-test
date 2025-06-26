@@ -23,7 +23,7 @@ class DCMotor:
         GPIO.setup(pin2, GPIO.OUT, initial=GPIO.LOW)
         self.__pin2 = pin2
 
-        GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.HIGH)
+        GPIO.setup(pwm_pin, GPIO.OUT)
         self.__pwm = GPIO.PWM(pwm_pin, 1000)
         self.pwm.start(0)
 
@@ -40,17 +40,17 @@ class DCMotor:
         if speed < self.__min_duty or speed > self.__max_duty:
             print(f"Invalid speed: {speed}. Setting to 0.")
             speed = 0
+        self.duty_cycle(speed)
         GPIO.output(self.__pin1, GPIO.HIGH)
         GPIO.output(self.__pin2, GPIO.LOW)
-        self.duty_cycle(speed)
 
     def backward(self, speed: int = 50) -> None:
         if speed < self.__min_duty or speed > self.__max_duty:
             print(f"Invalid speed: {speed}. Setting to 0.")
             speed = 0
+        self.duty_cycle(speed)
         GPIO.output(self.__pin1, GPIO.LOW)
         GPIO.output(self.__pin2, GPIO.HIGH)
-        self.duty_cycle(speed)
 
     def stop(self):
         GPIO.output(self.__pin1, GPIO.LOW)
@@ -119,14 +119,16 @@ class MotorsControllerNode(Node):
         if cmd.linear is not None and cmd.linear.x != 0:
             if abs(cmd.linear.x) > 1:
                 self.get_logger().info(
-                    "Velocity can not greater than 1 (100%), setting to 1."
+                    "Velocity can not greater than 100% (1 for FORWARD, -1 for BACKWARD), setting to maximum."
                 )
-                cmd.linear.x = 1
+                cmd.linear.x = 1.0 if cmd.linear.x > 0 else -1.0
+
+                speed = round(abs(cmd.linear.x) * 100)
 
             if cmd.linear.x < 0:
                 # command = "BACKWARD\n"
-                self.motor1.backward(-cmd.linear.x)
-                self.motor2.backward(-cmd.linear.x)
+                self.motor1.backward(speed)
+                self.motor2.backward(speed)
                 self.get_logger().info("Obstacle detected, moving backward.")
             # elif cmd.linear.x == 0:
             #     if cmd.angular.z == 0:
@@ -135,8 +137,8 @@ class MotorsControllerNode(Node):
             else:
                 # command = "FORWARD\n"
 
-                self.motor1.forward(cmd.linear.x)
-                self.motor2.forward(cmd.linear.x)
+                self.motor1.forward(speed)
+                self.motor2.forward(speed)
                 self.get_logger().info("No obstacle detected, moving forward.")
         elif cmd.angular is not None and cmd.angular.z != 0:
             if cmd.angular.z > 0:
