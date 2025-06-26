@@ -6,6 +6,7 @@ from rclpy.qos import qos_profile_sensor_data
 
 GPIO.setmode(GPIO.BOARD)
 
+
 class DCMotor:
     # the min_duty and max_duty are defined for 15000Hz frequency
     # you can pass as arguments
@@ -78,12 +79,15 @@ class MotorsControllerNode(Node):
     def __init__(self):
         super().__init__("motors_controller")
 
-
         self.__motor1 = DCMotor(
-            11, 13, 32,
+            11,
+            13,
+            32,
         )
         self.__motor2 = DCMotor(
-            16, 18, 33,
+            16,
+            18,
+            33,
         )
 
         # Initialize serial communication with Arduino
@@ -111,13 +115,20 @@ class MotorsControllerNode(Node):
             return
 
         cmd = self.last_ctl_command
+
         self.last_ctl_command = None
 
         if cmd.linear is not None and cmd.linear.x != 0:
+            if abs(cmd.linear.x) > 1:
+                self.get_logger().info(
+                    "Velocity can not greater than 1 (100%), setting to 1."
+                )
+                cmd.linear.x = 1
+
             if cmd.linear.x < 0:
                 # command = "BACKWARD\n"
-                self.__motor1.backward()
-                self.__motor2.backward()
+                self.__motor1.backward(-cmd.linear.x)
+                self.__motor2.backward(-cmd.linear.x)
                 self.get_logger().info("Obstacle detected, moving backward.")
             # elif cmd.linear.x == 0:
             #     if cmd.angular.z == 0:
@@ -125,9 +136,9 @@ class MotorsControllerNode(Node):
             #         self.get_logger().info("No signal from sensor, stopping.")
             else:
                 # command = "FORWARD\n"
-                
-                self.__motor1.forward()
-                self.__motor2.forward()
+
+                self.__motor1.forward(cmd.linear.x)
+                self.__motor2.forward(cmd.linear.x)
                 self.get_logger().info("No obstacle detected, moving forward.")
         elif cmd.angular is not None and cmd.angular.z != 0:
             if cmd.angular.z > 0:
@@ -170,4 +181,3 @@ def main(args=None):
         GPIO.cleanup()
         node.destroy_node()
         rclpy.shutdown()
-
