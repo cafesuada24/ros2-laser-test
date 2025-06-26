@@ -130,7 +130,7 @@ class MotorsControllerNode(Node):
                 # command = "BACKWARD\n"
                 self.motor1.backward(speed)
                 self.motor2.backward(speed)
-                self.get_logger().info("Obstacle detected, moving backward.")
+                self.get_logger().info(f"Obstacle detected, moving backward. SPEED: {speed}")
             # elif cmd.linear.x == 0:
             #     if cmd.angular.z == 0:
             #         command = 'STOP\n'
@@ -140,7 +140,7 @@ class MotorsControllerNode(Node):
 
                 self.motor1.forward(speed)
                 self.motor2.forward(speed)
-                self.get_logger().info("No obstacle detected, moving forward.")
+                self.get_logger().info(f"No obstacle detected, moving forward. SPEED: {speed}")
         elif cmd.angular is not None and cmd.angular.z != 0:
             if cmd.angular.z > 0:
                 # command = "LEFT\n"
