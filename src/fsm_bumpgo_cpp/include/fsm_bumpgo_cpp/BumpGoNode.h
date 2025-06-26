@@ -44,7 +44,7 @@ class BumpGoNode : public rclcpp::Node {
   const rclcpp::Duration TURNING_TIME{2s};
 
   static constexpr float OBSTACLE_DISTANCE{1.0f};
-  static constexpr float SPEED_LINEAR{0.5f};
+  static constexpr float SPEED_LINEAR{0.22f};
   static constexpr float SPEED_ANGULAR{0.5f};
 
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr m_vel_pub{};
