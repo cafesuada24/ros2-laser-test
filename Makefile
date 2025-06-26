@@ -14,13 +14,19 @@ build:
 	ln -s ./build/compile_commands.json compile_commands.json &&\
 	echo "compile_commands.json linked"
 
-run:
+init:
+	busybox devmem 0x700031fc 32 0x45
+	busybox devmem 0x6000d504 32 0x2
+	busybox devmem 0x70003248 32 0x46
+	busybox devmem 0x6000d100 32 0x00
+
+run: init
 	ros2 launch hardware_controller run.launch.py
 
 set_mode_hard_control:
 	ros2 param set /bump_go control_mode 2
 
-set_mode_hard_auto:
+set_mode_auto:
 	ros2 param set /bump_go control_mode 1
 
 # run_bumpgo:
