@@ -123,7 +123,7 @@ class MotorsControllerNode(Node):
                 )
                 cmd.linear.x = 1.0 if cmd.linear.x > 0 else -1.0
 
-                speed = round(abs(cmd.linear.x) * 100)
+            speed = round(abs(cmd.linear.x) * 100)
 
             if cmd.linear.x < 0:
                 # command = "BACKWARD\n"
