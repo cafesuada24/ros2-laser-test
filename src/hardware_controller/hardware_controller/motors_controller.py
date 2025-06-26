@@ -144,8 +144,8 @@ class MotorsControllerNode(Node):
         elif cmd.angular is not None and cmd.angular.z != 0:
             if cmd.angular.z > 0:
                 # command = "LEFT\n"
-                self.motor1.backward()
-                self.motor2.forward()
+                self.motor1.backward(10)
+                self.motor2.forward(20)
                 self.get_logger().info("Turning left")
             # elif cmd.linear.x == 0:
             #     if cmd.angular.z == 0:
@@ -153,8 +153,8 @@ class MotorsControllerNode(Node):
             #         self.get_logger().info("No signal from sensor, stopping.")
             else:
                 # command = "RIGHT\n"
-                self.motor1.forward()
-                self.motor2.backward()
+                self.motor1.forward(20)
+                self.motor2.backward(10)
                 self.get_logger().info("Turning right")
         else:
             # command = "STOP\n"
