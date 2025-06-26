@@ -5,7 +5,7 @@ BUILD_ARGS := --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 
 # .PHONY: build run_bumpgo run_gz run_bridge
-.PHONY: build run open_teleop set_mode_hard_control set_mode_auto
+.PHONY: build run open_teleop set_mode_hard_control set_mode_auto init
 
 build:
 	colcon build $(BUILD_ARGS) &&\
@@ -20,7 +20,7 @@ init:
 	busybox devmem 0x70003248 32 0x46
 	busybox devmem 0x6000d100 32 0x00
 
-run: init
+run:
 	ros2 launch hardware_controller run.launch.py
 
 set_mode_hard_control:
