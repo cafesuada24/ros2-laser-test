@@ -4,7 +4,6 @@ import rclpy
 from geometry_msgs.msg import Twist
 from rclpy.qos import qos_profile_sensor_data
 
-GPIO.setmode(GPIO.BOARD)
 
 
 class DCMotor:
@@ -79,12 +78,12 @@ class MotorsControllerNode(Node):
     def __init__(self):
         super().__init__("motors_controller")
 
-        self.__motor1 = DCMotor(
+        self.motor1 = DCMotor(
             11,
             13,
             32,
         )
-        self.__motor2 = DCMotor(
+        self.motor2 = DCMotor(
             16,
             18,
             33,
@@ -115,7 +114,6 @@ class MotorsControllerNode(Node):
             return
 
         cmd = self.last_ctl_command
-
         self.last_ctl_command = None
 
         if cmd.linear is not None and cmd.linear.x != 0:
@@ -127,8 +125,8 @@ class MotorsControllerNode(Node):
 
             if cmd.linear.x < 0:
                 # command = "BACKWARD\n"
-                self.__motor1.backward(-cmd.linear.x)
-                self.__motor2.backward(-cmd.linear.x)
+                self.motor1.backward(-cmd.linear.x)
+                self.motor2.backward(-cmd.linear.x)
                 self.get_logger().info("Obstacle detected, moving backward.")
             # elif cmd.linear.x == 0:
             #     if cmd.angular.z == 0:
@@ -137,28 +135,28 @@ class MotorsControllerNode(Node):
             else:
                 # command = "FORWARD\n"
 
-                self.__motor1.forward(cmd.linear.x)
-                self.__motor2.forward(cmd.linear.x)
+                self.motor1.forward(cmd.linear.x)
+                self.motor2.forward(cmd.linear.x)
                 self.get_logger().info("No obstacle detected, moving forward.")
         elif cmd.angular is not None and cmd.angular.z != 0:
             if cmd.angular.z > 0:
                 # command = "LEFT\n"
-                self.__motor1.backward()
-                self.__motor2.forward()
+                self.motor1.backward()
+                self.motor2.forward()
                 self.get_logger().info("Turning left")
             # elif cmd.linear.x == 0:
             #     if cmd.angular.z == 0:
             #         command = 'STOP\n'
             #         self.get_logger().info("No signal from sensor, stopping.")
             else:
-                command = "RIGHT\n"
-                self.__motor1.forward()
-                self.__motor2.backward()
+                # command = "RIGHT\n"
+                self.motor1.forward()
+                self.motor2.backward()
                 self.get_logger().info("Turning right")
         else:
             # command = "STOP\n"
-            self.__motor1.stop()
-            self.__motor2.stop()
+            self.motor1.stop()
+            self.motor2.stop()
             self.get_logger().info("Stopping...")
 
         # if self.ser:
@@ -170,6 +168,7 @@ class MotorsControllerNode(Node):
 
 
 def main(args=None):
+    GPIO.setmode(GPIO.BOARD)
     rclpy.init(args=args)
     try:
         node = MotorsControllerNode()
@@ -178,6 +177,8 @@ def main(args=None):
         pass
     finally:
         # node.ser.close()
+        node.motor1.stop()
+        node.motor2.stop()
         GPIO.cleanup()
         node.destroy_node()
         rclpy.shutdown()
