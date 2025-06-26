@@ -4,4 +4,7 @@ build
 install
 log
 **/__pycache__
+src/*
+!src/fsm_bumpgo_cpp
+!src/hardware_controller
 
