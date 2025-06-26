@@ -5,6 +5,7 @@ from geometry_msgs.msg import Twist
 from rclpy.qos import qos_profile_sensor_data
 
 
+GPIO.setmode(GPIO.BOARD)
 
 class DCMotor:
     # the min_duty and max_duty are defined for 15000Hz frequency
@@ -40,17 +41,17 @@ class DCMotor:
         if speed < self.__min_duty or speed > self.__max_duty:
             print(f"Invalid speed: {speed}. Setting to 0.")
             speed = 0
-        self.duty_cycle(speed)
         GPIO.output(self.__pin1, GPIO.LOW)
         GPIO.output(self.__pin2, GPIO.HIGH)
+        self.duty_cycle(speed)
 
     def backward(self, speed: int = 50) -> None:
         if speed < self.__min_duty or speed > self.__max_duty:
             print(f"Invalid speed: {speed}. Setting to 0.")
             speed = 0
-        self.duty_cycle(speed)
         GPIO.output(self.__pin1, GPIO.HIGH)
         GPIO.output(self.__pin2, GPIO.LOW)
+        self.duty_cycle(speed)
 
     def stop(self):
         GPIO.output(self.__pin1, GPIO.LOW)
@@ -170,7 +171,6 @@ class MotorsControllerNode(Node):
 
 
 def main(args=None):
-    GPIO.setmode(GPIO.BOARD)
     rclpy.init(args=args)
     try:
         node = MotorsControllerNode()
