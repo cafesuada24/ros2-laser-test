@@ -43,8 +43,8 @@ class UltrasonicSensorNode(Node):
         # self.add_on_set_parameters_callback(self.__set_parameters_callback)
 
         self.__scan_publisher = self.create_publisher(LaserScan, self.__id, 10)
-        self.create_timer(0.05, self.__publish_distance)
-        self.__sleep_time = Duration(seconds=0.00001)
+        self.create_timer(0.1, self.__publish_distance)
+        self.__sleep_time = Duration(seconds=0.00002)
 
     def __publish_distance(self) -> None:
         msg = LaserScan()
