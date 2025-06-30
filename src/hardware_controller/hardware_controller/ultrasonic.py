@@ -54,7 +54,7 @@ class UltrasonicSensorNode(Node):
         msg.angle_increment = 0.0
         msg.time_increment = 0.0
         msg.range_min = 0.0
-        msg.range_max = 10  # Meters
+        msg.range_max = 10.0  # Meters
 
         try:
             dist = self.__get_obstacle_distance()
