@@ -76,8 +76,8 @@ class UltrasonicSensorNode(Node):
         """Get measured distance in meter."""
         GPIO.output(self.__pin_trig, GPIO.HIGH)
         target_time = self.get_clock().now() + self.__sleep_time
-        while self.get_clock() < target_time:
-            continue
+        while self.get_clock().now() < target_time and rclpy.ok():
+            pass
         # self.get_clock().sleep_until(self.get_clock().now() + 0.00001)
         GPIO.output(self.__pin_trig, GPIO.LOW)
 
@@ -85,15 +85,15 @@ class UltrasonicSensorNode(Node):
         # arrivalTime = self.get_clock().now()
 
         # start_time = time.time()
-        start_time = self.get_clock().now().seconds_nanoseconds()[0]
+        start_time = self.get_clock().now().to_sec()
         while GPIO.input(self.__pin_echo) == 0:
             # start_time = time.time()
-            start_time = self.get_clock().now().seconds_nanoseconds()[0]
+            start_time = self.get_clock().now().to_sec()
         # arrival_time = time.time()
-        arrival_time = self.get_clock().now().seconds_nanoseconds()[0]
+        arrival_time = self.get_clock().now().to_sec()
         while GPIO.input(self.__pin_echo) == 1:
             # arrival_time = time.time()
-            arrival_time = self.get_clock().now().seconds_nanoseconds()[0]
+            arrival_time = self.get_clock().now().to_sec()
 
         time_elapsed = arrival_time - start_time
         distance = round(time_elapsed * 17150 / 100, 4)
