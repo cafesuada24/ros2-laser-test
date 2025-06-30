@@ -65,7 +65,7 @@ class UltrasonicSensorNode(Node):
             else:
                 self.get_logger().info("No obstacle detected")
         except Exception as e:
-            self.get_logger().error(e)
+            self.get_logger().error(str(e))
             return
 
         self.__scan_publisher.publish(msg)
