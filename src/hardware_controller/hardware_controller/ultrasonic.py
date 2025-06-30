@@ -8,7 +8,7 @@ from rclpy.node import Node
 from rclpy.parameter import Parameter
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Header
-import time
+# import time
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -85,17 +85,17 @@ class UltrasonicSensorNode(Node):
         # arrivalTime = self.get_clock().now()
 
         # start_time = time.time()
-        # start_time = self.get_clock().now().
+        start_time = self.get_clock().now().seconds_nanoseconds()[1]
         while GPIO.input(self.__pin_echo) == 0:
-            start_time = time.time()
-            # start_time = self.get_clock().now().to_sec()
-        arrival_time = time.time()
-        # arrival_time = self.get_clock().now().to_sec()
+            # start_time = time.time()
+            start_time = self.get_clock().now().seconds_nanoseconds()[1]
+        # arrival_time = time.time()
+        arrival_time = self.get_clock().now().seconds_nanoseconds()[1]
         while GPIO.input(self.__pin_echo) == 1:
-            arrival_time = time.time()
-            # arrival_time = self.get_clock().now().to_sec()
+            # arrival_time = time.time()
+            arrival_time = self.get_clock().now().seconds_nanoseconds()[1]
 
-        time_elapsed = arrival_time - start_time
+        time_elapsed = (arrival_time - start_time) / 1000000000
         distance = round(time_elapsed * 17150 / 100, 4)
         distance = distance if distance <= self.MAX_OBSTACLE_DISTANCE else inf
         return distance
