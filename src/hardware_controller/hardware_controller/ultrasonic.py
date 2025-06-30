@@ -3,6 +3,7 @@ from typing import List, Optional
 import Jetson.GPIO as GPIO
 from rcl_interfaces.msg import SetParametersResult
 import rclpy
+from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 from sensor_msgs.msg import LaserScan
@@ -43,7 +44,7 @@ class UltrasonicSensorNode(Node):
 
         self.__scan_publisher = self.create_publisher(LaserScan, self.__id, 10)
         self.create_timer(0.05, self.__publish_distance)
-        # self.__rate = self.create_rate(0.00001)
+        self.__sleep_time = Duration(seconds=0.00001)
 
     def __publish_distance(self) -> None:
         msg = LaserScan()
@@ -74,7 +75,10 @@ class UltrasonicSensorNode(Node):
     def __get_obstacle_distance(self) -> float:
         """Get measured distance in meter."""
         GPIO.output(self.__pin_trig, GPIO.HIGH)
-        self.get_clock().sleep_for(0.00001)
+        target_time = self.get_clock().now() + self.__sleep_time
+        while self.get_clock() < target_time:
+            continue
+        # self.get_clock().sleep_until(self.get_clock().now() + 0.00001)
         GPIO.output(self.__pin_trig, GPIO.LOW)
 
         # startTime = self.get_clock().now()
