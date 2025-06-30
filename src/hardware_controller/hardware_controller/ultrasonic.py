@@ -1,4 +1,5 @@
 from math import inf
+import time
 from typing import List, Optional
 import Jetson.GPIO as GPIO
 from rcl_interfaces.msg import SetParametersResult
@@ -76,31 +77,33 @@ class UltrasonicSensorNode(Node):
     def __get_obstacle_distance(self) -> float:
         """Get measured distance in meter."""
         GPIO.output(self.__pin_trig, GPIO.LOW)
-        target_time = self.get_clock().now() + self.__reset_time
-        while self.get_clock().now() < target_time and rclpy.ok():
-            pass
+        # target_time = self.get_clock().now() + self.__reset_time
+        # while self.get_clock().now() < target_time and rclpy.ok():
+        #     pass
+        time.sleep(0.05)
         GPIO.output(self.__pin_trig, GPIO.HIGH)
-        target_time = self.get_clock().now() + self.__pulse_time
-        while self.get_clock().now() < target_time and rclpy.ok():
-            pass
+        time.sleep(0.00001)
+        # target_time = self.get_clock().now() + self.__pulse_time
+        # while self.get_clock().now() < target_time and rclpy.ok():
+        #     pass
         # self.get_clock().sleep_until(self.get_clock().now() + 0.00001)
         GPIO.output(self.__pin_trig, GPIO.LOW)
 
         # startTime = self.get_clock().now()
         # arrivalTime = self.get_clock().now()
 
-        # start_time = time.time()
-        start_time = self.get_clock().now().seconds_nanoseconds()[1]
+        start_time = time.time()
+        # start_time = self.get_clock().now().seconds_nanoseconds()[1]
         while GPIO.input(self.__pin_echo) == 0:
-            # start_time = time.time()
-            start_time = self.get_clock().now().seconds_nanoseconds()[1]
-        # arrival_time = time.time()
-        arrival_time = self.get_clock().now().seconds_nanoseconds()[1]
+            start_time = time.time()
+            # start_time = self.get_clock().now().seconds_nanoseconds()[1]
+        arrival_time = time.time()
+        # arrival_time = self.get_clock().now().seconds_nanoseconds()[1]
         while GPIO.input(self.__pin_echo) == 1:
-            # arrival_time = time.time()
-            arrival_time = self.get_clock().now().seconds_nanoseconds()[1]
+            arrival_time = time.time()
+            # arrival_time = self.get_clock().now().seconds_nanoseconds()[1]
 
-        time_elapsed = (arrival_time - start_time) / 1000000000
+        time_elapsed = (arrival_time - start_time)
         distance = round(time_elapsed * 17150 / 100, 4)
         distance = distance if distance <= self.MAX_OBSTACLE_DISTANCE else inf
         return distance
