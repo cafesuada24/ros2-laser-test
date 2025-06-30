@@ -43,6 +43,7 @@ class UltrasonicSensorNode(Node):
 
         self.__scan_publisher = self.create_publisher(LaserScan, self.__id, 10)
         self.create_timer(0.05, self.__publish_distance)
+        self.__rate = self.create_rate(0.00001)
 
     def __publish_distance(self) -> None:
         msg = LaserScan()
@@ -73,7 +74,7 @@ class UltrasonicSensorNode(Node):
     def __get_obstacle_distance(self) -> float:
         """Get measured distance in meter."""
         GPIO.output(self.__pin_trig, GPIO.HIGH)
-        time.sleep(0.00001)
+        self.__rate.sleep()
         GPIO.output(self.__pin_trig, GPIO.LOW)
 
         # startTime = self.get_clock().now()
