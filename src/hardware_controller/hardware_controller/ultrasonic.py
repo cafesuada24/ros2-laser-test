@@ -80,7 +80,7 @@ class UltrasonicSensorNode(Node):
         # arrivalTime = self.get_clock().now()
 
         # start_time = time.time()
-        startTime = self.get_clock().now()
+        start_time = self.get_clock().now()
         while GPIO.input(self.__pin_echo) == 0:
             # start_time = time.time()
             start_time = self.get_clock().now()
@@ -90,7 +90,7 @@ class UltrasonicSensorNode(Node):
             # arrival_time = time.time()
             arrival_time = self.get_clock().now()
 
-        time_elapsed = (arrival_time - start_time).to_msg().sec
+        time_elapsed = (arrival_time - start_time)[0]
         distance = round(time_elapsed * 17150 / 100, 4)
         distance = distance if distance <= self.MAX_OBSTACLE_DISTANCE else inf
         return distance
