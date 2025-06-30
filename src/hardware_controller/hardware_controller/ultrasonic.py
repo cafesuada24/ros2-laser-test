@@ -127,5 +127,6 @@ def main(args: Optional[List[str]] = None) -> None:
     except KeyboardInterrupt:
         pass
     finally:
+        GPIO.cleanup()
         node.destroy_node()
         rclpy.shutdown()
