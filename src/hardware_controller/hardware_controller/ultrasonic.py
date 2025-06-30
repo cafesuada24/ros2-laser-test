@@ -59,7 +59,7 @@ class UltrasonicSensorNode(Node):
         try:
             dist = self.__get_obstacle_distance()
             msg.ranges = [dist]
-            msg.header.stamp = self.get_clock().now()
+            msg.header.stamp = self.get_clock().now().to_msg()
             if dist != inf:
                 self.get_logger().info(f"Obstacle dected at [{dist} m].")
             else:
