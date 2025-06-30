@@ -92,7 +92,7 @@ class UltrasonicSensorNode(Node):
 
         time_elapsed = (arrival_time - start_time).to_msg().sec
         distance = round(time_elapsed * 17150 / 100, 4)
-        distance = distance if distance <= 10 else inf
+        distance = distance if distance <= self.MAX_OBSTACLE_DISTANCE else inf
         return distance
 
     # def __set_parameters_callback(
