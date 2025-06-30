@@ -39,12 +39,12 @@ class UltrasonicSensorNode(Node):
         #         ("echo", self.__pin_echo, "Echo pin"),
         #     ],
         # )
-        GPIO.setup(self.__pin_trig, GPIO.OUT, initial=0)
         # self.add_on_set_parameters_callback(self.__set_parameters_callback)
 
         self.__scan_publisher = self.create_publisher(LaserScan, self.__id, 10)
         self.create_timer(0.1, self.__publish_distance)
-        self.__sleep_time = Duration(seconds=0.00002)
+        self.__pulse_time = Duration(seconds=0.00001)
+        self.__reset_time = Duration(seconds=0.000005)
 
     def __publish_distance(self) -> None:
         msg = LaserScan()
@@ -71,11 +71,16 @@ class UltrasonicSensorNode(Node):
             return
 
         self.__scan_publisher.publish(msg)
+    
 
     def __get_obstacle_distance(self) -> float:
         """Get measured distance in meter."""
+        GPIO.output(self.__pin_trig, GPIO.LOW)
+        target_time = self.get_clock().now() + self.__reset_time
+        while self.get_clock().now() < target_time and rclpy.ok():
+            pass
         GPIO.output(self.__pin_trig, GPIO.HIGH)
-        target_time = self.get_clock().now() + self.__sleep_time
+        target_time = self.get_clock().now() + self.__pulse_time
         while self.get_clock().now() < target_time and rclpy.ok():
             pass
         # self.get_clock().sleep_until(self.get_clock().now() + 0.00001)
