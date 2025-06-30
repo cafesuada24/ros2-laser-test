@@ -24,6 +24,7 @@ setup(
         'console_scripts': [
             'irsensor = hardware_controller.irsensor:main',
             'motors_controller = hardware_controller.motors_controller:main',
+            'ultrasonic = hardware_controller.ultrasonic:main'
         ],
     },
 )
