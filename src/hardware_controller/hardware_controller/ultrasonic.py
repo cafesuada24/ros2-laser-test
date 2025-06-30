@@ -1,4 +1,5 @@
 from math import inf
+from typing import List
 import Jetson.GPIO as GPIO
 from rcl_interfaces.msg import SetParametersResult
 import rclpy
@@ -114,7 +115,7 @@ class UltrasonicSensorNode(Node):
     #             return result
     #     return result
 
-def main(args: list[str] | None =None):
+def main(args: List[str] | None =None):
     rclpy.init(args=args)
 
     node = UltrasonicSensorNode()
