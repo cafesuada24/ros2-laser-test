@@ -13,7 +13,7 @@ GPIO.setmode(GPIO.BOARD)
 
 
 class UltrasonicSensorNode(Node):
-    MAX_OBSTACLE_DISTANCE: float = 1000
+    MAX_OBSTACLE_DISTANCE: float = 10
 
     def __init__(
         self, node_name: str = "ultrasonic", pin_trig: int = 31, pin_echo: int = 33
@@ -89,9 +89,9 @@ class UltrasonicSensorNode(Node):
             # arrivalTime = self.get_clock().now()
 
         time_elapsed = arrival_time - start_time
-        distance = round(time_elapsed * 17150, 2)
-
-        return distance / 100
+        distance = round(time_elapsed * 17150 / 100, 4)
+        distance = distance if distance <= 10 else inf
+        return distance
 
     # def __set_parameters_callback(
     #     self, parameters: list[Parameter]
