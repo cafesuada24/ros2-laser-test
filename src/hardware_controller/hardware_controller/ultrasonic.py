@@ -91,7 +91,7 @@ class UltrasonicSensorNode(Node):
         time_elapsed = arrival_time - start_time
         distance = round(time_elapsed * 17150, 2)
 
-        return distance / 1000
+        return distance / 100
 
     # def __set_parameters_callback(
     #     self, parameters: list[Parameter]
