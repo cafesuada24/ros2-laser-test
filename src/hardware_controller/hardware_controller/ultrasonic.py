@@ -1,5 +1,5 @@
 from math import inf
-from typing import List
+from typing import List, Optional
 import Jetson.GPIO as GPIO
 from rcl_interfaces.msg import SetParametersResult
 import rclpy
@@ -15,7 +15,9 @@ GPIO.setmode(GPIO.BOARD)
 class UltrasonicSensorNode(Node):
     MAX_OBSTACLE_DISTANCE: float = 1000
 
-    def __init__(self, node_name: str = "ultrasonic", pin_trig: int = 31, pin_echo: int = 33) -> None:
+    def __init__(
+        self, node_name: str = "ultrasonic", pin_trig: int = 31, pin_echo: int = 33
+    ) -> None:
         super().__init__(node_name=node_name)
         self.__id = f"{node_name}/raw_scan"
 
@@ -115,7 +117,8 @@ class UltrasonicSensorNode(Node):
     #             return result
     #     return result
 
-def main(args: List[str] | None =None):
+
+def main(args: Optional[List[str]] = None) -> None:
     rclpy.init(args=args)
 
     node = UltrasonicSensorNode()
