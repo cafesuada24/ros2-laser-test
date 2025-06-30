@@ -90,7 +90,7 @@ class UltrasonicSensorNode(Node):
             # arrival_time = time.time()
             arrival_time = self.get_clock().now()
 
-        time_elapsed = (arrival_time - start_time)[0]
+        time_elapsed = (arrival_time - start_time).to_sec()
         distance = round(time_elapsed * 17150 / 100, 4)
         distance = distance if distance <= self.MAX_OBSTACLE_DISTANCE else inf
         return distance
