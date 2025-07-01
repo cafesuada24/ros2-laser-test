@@ -142,7 +142,12 @@ class MotorsControllerNode(Node):
                 self.motor2.forward(speed)
                 self.get_logger().info(f"No obstacle detected, moving forward. SPEED: {speed}")
         elif cmd.angular is not None and cmd.angular.z != 0:
-            speed = round(abs(cmd.linear.x) * 100)
+            if abs(cmd.angular.z) > 1:
+                self.get_logger().info(
+                    "Velocity can not greater than 100% (1 for RIGHT, -1 for LEFT), setting to maximum."
+                )
+                cmd.angular.z = 1.0 if cmd.angular.z > 0 else -1.0
+            speed = round(abs(cmd.angular.z) * 100)
             if cmd.angular.z > 0:
                 # command = "LEFT\n"
                 self.motor1.backward(speed)
