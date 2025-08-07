@@ -21,7 +21,21 @@ set(dependencies
 
 include_directories(include)
 
+add_library(${PROJECT_NAME} SHARED src/ultrasonic_aggregator/AggregatorNode.cpp)
+ament_target_dependencies(${PROJECT_NAME} ${dependencies})
 
+add_executable(aggregator src/main.cpp)
+ament_target_dependencies(ultrasonic_aggregator ${dependencies})
+
+target_link_libraries(aggregator ${PROJECT_NAME})
+
+install(TARGETS
+  ${PROJECT_NAME}
+  aggregator
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
