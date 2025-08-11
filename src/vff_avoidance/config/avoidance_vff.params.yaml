@@ -1,0 +1,8 @@
+avoidance_vff:
+  ros__parameters:
+    obstacle_frames:
+      - detected_obstacle_0
+      - detected_obstacle_1
+      - detected_obstacle_2
+    use_sim_time: True
+

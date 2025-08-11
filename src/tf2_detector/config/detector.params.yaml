@@ -1,0 +1,16 @@
+obstacle_detector:
+  ros__parameters:
+    input_scans: [sonar_1, sonar_2, sonar_3]  
+    scanner_frames: [sonar_1, sonar_2, sonar_3]  
+    obstacle_frames:
+      - detected_obstacle_0
+      - detected_obstacle_1
+      - detected_obstacle_2
+    use_sim_time: True
+obstacle_monitor:
+  ros__parameters:
+    obstacle_frames:
+      - detected_obstacle_0
+      - detected_obstacle_1
+      - detected_obstacle_2
+    
