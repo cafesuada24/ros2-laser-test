@@ -7,4 +7,7 @@ log
 src/*
 !src/fsm_bumpgo_cpp
 !src/hardware_controller
-
+!src/tf2_detector
+!src/vff_avoidance
+!src/sim_demo
+!src/ultrasonic_aggregator
